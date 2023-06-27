@@ -1,0 +1,113 @@
+    <%- include('components/meta.ejs') %>
+    <!-- Right Panel -->
+
+
+    <div class="content">
+        <div class="animated fadeIn">
+            <div class="row">
+
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <strong><%= faq.title %></strong>
+                        </div>
+                        <div><%- faq.content %></div>
+                    </div>
+                </div>
+
+
+            </div>
+
+
+        </div>
+        <link href="//cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+        <script src="//cdn.quilljs.com/1.3.6/quill.js"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/jquery@2.2.4/dist/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.4/dist/umd/popper.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/jquery-match-height@0.7.2/dist/jquery.matchHeight.min.js"></script>
+        <script src="assets/js/main.js"></script>
+
+
+        <script>
+            $(document).ready(function () {
+                var quill = new Quill('#editor', {
+                    theme: 'snow',
+                    formats: [
+                        'header',
+                        'bold',
+                        'italic',
+                        'underline',
+                        'strike',
+                        'blockquote',
+                        'code-block',
+                        {
+                            'list': 'ordered'
+                        },
+                        {
+                            'list': 'bullet'
+                        },
+                        {
+                            'indent': '-1'
+                        },
+                        {
+                            'indent': '+1'
+                        },
+                        'link',
+                        'image'
+                    ]
+                });
+                // Get the HTML content of the editor
+                var html = quill.root.innerHTML;
+                quill.setContents("<% -JSON.stringify(faq.content) %> ");
+
+                $('#submitBtn').click(function () {
+                    const quillContent = quill.root.innerHTML;
+                    const textarea = document.querySelector('#textarea-content');
+                    textarea.value = quillContent;
+                    var formData = $('#faqdetail').serialize(); // Get the form data as a string    
+
+                    <
+                    %
+                    if (typeof faqid !== 'undefined' && faqid !== null) {
+                        % >
+                        $.ajax({
+                            type: 'PUT',
+                            url: '/api/faq/<%= faqid %>', // Replace with your server-side URL
+                            contentType: 'application/x-www-form-urlencoded',
+                            data: formData,
+                            success: function (response) {
+                                window.location = "./faqs"
+                                console.log(response); // Handle the server response
+                            },
+                            error: function (xhr, status, error) {
+                                console.log(error); // Handle any errors
+                            }
+                        }); <
+                        %
+                    } else {
+                        % >
+                        $.ajax({
+                            type: 'POST',
+                            url: '/api/faq', // Replace with your server-side URL
+                            contentType: 'application/x-www-form-urlencoded',
+                            data: formData,
+                            success: function (response) {
+                                window.location = "./faqs"
+                                console.log(response); // Handle the server response
+                            },
+                            error: function (xhr, status, error) {
+                                console.log(error); // Handle any errors
+                            }
+                        }); <
+                        %
+                    } % >
+
+
+                });
+            });
+        </script>
+        </body>
+
+        </html>
